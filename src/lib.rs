@@ -31,6 +31,30 @@ pub fn irr(input: &[f64]) -> Option<f64> {
         })
 }
 
+// following r's FinCal twrr
+//
+// This one returns Option for now, until I get an error enum
+pub fn twrr(ev: &[f64], bv: &[f64], cfr: &[f64]) -> Option<f64> {
+    if ev.len() != bv.len() && bv.len() != cfr.len() {
+        return None
+    }
+
+    let r = ev.len();
+
+    let mut wr: f64 = 1.0;
+    for i in 0..r {
+        wr = wr * (hpr(ev[i], bv[i], cfr[i]) + 1.0);
+    }
+
+    let res = wr.powf(1.0 / r as f64) - 1.0;
+
+    Some(res)
+}
+
+pub fn hpr(ev: f64, bv: f64, cfr: f64) -> f64 {
+    (ev - bv + cfr) / bv
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -57,5 +81,14 @@ mod tests {
         // from wikipedia example
         let rate = irr(&[-123400.0, 36200.0, 54800.0, 48100.0]).unwrap();
         assert_eq!(format!("{:.4}", rate), "0.0596");
+    }
+
+    #[test]
+    fn test_twrr() {
+        // example drawn from R FinCal twrr
+
+        let twrr = twrr(&[120.0, 260.0,], &[100.0, 240.0], &[2.0, 4.0]).unwrap();
+        assert_eq!(format!("{:.5}", twrr), "0.15845");
+
     }
 }
