@@ -15,6 +15,7 @@ pub fn irr(input: &[f64]) -> Option<f64> {
     }
 
     let rs = rs.iter()
+        .filter(|c| c.im == 0.0)
         .map(|c| c.re)
         .filter(|x| *x > 0.0);
 
@@ -81,6 +82,13 @@ mod tests {
         // from wikipedia example
         let rate = irr(&[-123400.0, 36200.0, 54800.0, 48100.0]).unwrap();
         assert_eq!(format!("{:.4}", rate), "0.0596");
+    }
+
+    #[test]
+    fn test_irr_2() {
+        // from breaking thing in sos, trailing zero
+        let rate = irr(&[-185453200.3173828, -7850902.27355957, 6214230.003356934, 2605200.0732421875, 0.0, 0.0, 22793749.755859375, 64418824.798583984, -67894928.98165894, 18489907.76702881, 51488987.86062622, 0.0]).unwrap();
+        assert_eq!(format!("{:.4}", rate), "-0.0829");
     }
 
     #[test]
